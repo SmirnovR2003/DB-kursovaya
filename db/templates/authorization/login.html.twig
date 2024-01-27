@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <script>
+        function redirectToUrl(url) {
+            location.href = url;
+        }
+        function login(url, authUrl, errorPageUrl) {
+            const data = JSON.stringify({
+                email: document.getElementById('login-email-value').value,
+                password: document.getElementById('login-password-value').value,
+            });
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", authUrl);
+            xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+            xhr.onload = () => {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    location.href = url;
+                } else {
+                    location.href = errorPageUrl;
+                }
+            };
+            xhr.send(data);
+        }
+    </script>
+    <div class="login_content">
+        <h1 id="welcome_text">Welcome</h1>
+        <form action="" method="post" class="login-form">
+            <div>
+                <input id="login-email-value" class="login-input" placeholder="Email" type="email" name="email" required />
+            </div>
+            <div>
+                <input id="login-password-value" class="login-input" placeholder="Password" type="password" name="password" required />
+            </div>
+            <div>
+                <input class="login-submit" type="submit" value="Log in" onclick="login('{{ mainPage }}', '{{ authorizationUrl }}', '{{ errorPageUrl }}')"/>
+            </div>
+        </form>
+
+        <input class="login-register" type="submit" value="Register" onclick="redirectToUrl('{{ registerPage }}')"/>
+    </div>
+{% endblock %}

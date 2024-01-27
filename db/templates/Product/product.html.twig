@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <script>
+        function addToBasket() {
+            let retrievedObject = localStorage.getItem('product');
+            let parsedData = JSON.parse(retrievedObject);
+            let isNeedAddNewProduct = true;
+            if (parsedData !== null)
+            {
+                parsedData.forEach(function(item, index) {
+                    if (isNeedAddNewProduct && item.name === '{{ name }}')
+                    {
+                        this[index].count = this[index].count + 1;
+                        isNeedAddNewProduct = false;
+                    }
+                }, parsedData);
+            } else {
+                parsedData = [];
+            }
+            if (isNeedAddNewProduct) {
+                let data = {
+                    'link': 1,
+                    'id': {{ id }},
+                    'name': '{{ name }}',
+                    'cost': '{{ cost }}',
+                    'category': '{{ category }}',
+                    'count': 1,
+                };
+                parsedData.push(data);
+            }
+
+            localStorage.setItem('product',  JSON.stringify(parsedData));
+            window.location.reload();
+        }
+    </script>
+    <div class="page_content">
+        {{ include('components/sidebar/sidebar.html.twig') }}
+        <div class="product_content">
+            <div class="product-review">
+                <img class="product-image" src="{{ asset(imagePath) }}" alt="Картинка не загрузилась"/>
+                <div class="product-features"><h2>Характеристики</h2><br/>Наименование {{ name }}<br/>Стоимость {{ cost }}<br/>Категория {{ category }}</div>
+            </div>
+            <div class="product-description"><h2>Описание</h2>{{ description }}</div>
+        </div>
+        {% if not isAdmin %}
+        <div class="product-button" onclick="addToBasket()">
+            {{ component('Button', { message: 'Добавить' }) }}
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}
